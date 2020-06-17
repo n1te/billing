@@ -2,17 +2,21 @@ import csv
 from datetime import datetime
 
 from django.db import IntegrityError
-from django.http import HttpResponse, FileResponse
+from django.http import FileResponse, HttpResponse
 from django.utils.functional import cached_property
-from rest_framework import viewsets, mixins, exceptions
+
+from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from wallet.api.exceptions import WrongAmountError, WrongDateFormatError
-from wallet.api.serializers import WalletSerializer, BaseTransactionSerializer, DepositTransactionSerializer, \
-    WithdrawalTransactionSerializer
-from wallet.models import Wallet, Transaction
-from rest_framework import status
-from rest_framework.response import Response
+from wallet.api.serializers import (
+    BaseTransactionSerializer,
+    DepositTransactionSerializer,
+    WalletSerializer,
+    WithdrawalTransactionSerializer,
+)
+from wallet.models import Transaction, Wallet
 
 
 class WalletViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -71,12 +75,7 @@ class TransactionViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         writer = csv.writer(response)
         writer.writerow(['created', 'from', 'to', 'amount'])
         for item in serializer.data:
-            writer.writerow([
-                item['created'],
-                item.get('wallet_from', ''),
-                item['wallet_to'],
-                item['amount']]
-            )
+            writer.writerow([item['created'], item.get('wallet_from', ''), item['wallet_to'], item['amount']])
         return response
 
     @action(methods=['post'], detail=False)

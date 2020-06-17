@@ -1,7 +1,9 @@
-import pytest
 from django.db import IntegrityError
 
+import pytest
+
 from wallet.models import Transaction
+
 
 pytestmark = pytest.mark.django_db
 

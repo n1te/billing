@@ -7,6 +7,7 @@ from wallet.models import Wallet
 def wallet_factory():
     def f():
         return Wallet.objects.create()
+
     return f
 
 

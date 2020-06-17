@@ -11,8 +11,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
@@ -31,10 +30,7 @@ class Migration(migrations.Migration):
                 ('balance', models.DecimalField(decimal_places=4, default=0, max_digits=12)),
             ],
         ),
-        migrations.AddIndex(
-            model_name='wallet',
-            index=models.Index(fields=['name'], name='name_idx'),
-        ),
+        migrations.AddIndex(model_name='wallet', index=models.Index(fields=['name'], name='name_idx'),),
         migrations.AddConstraint(
             model_name='wallet',
             constraint=models.CheckConstraint(check=models.Q(balance__gte=0), name='non_negative_balance'),
@@ -42,19 +38,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='transaction',
             name='wallet_from',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='wallet.Wallet'),
+            field=models.ForeignKey(
+                null=True, on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='wallet.Wallet'
+            ),
         ),
         migrations.AddField(
             model_name='transaction',
             name='wallet_to',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='incomes', to='wallet.Wallet'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name='incomes', to='wallet.Wallet'
+            ),
         ),
         migrations.AddIndex(
-            model_name='transaction',
-            index=models.Index(fields=['wallet_from'], name='wallet_from_idx'),
+            model_name='transaction', index=models.Index(fields=['wallet_from'], name='wallet_from_idx'),
         ),
-        migrations.AddIndex(
-            model_name='transaction',
-            index=models.Index(fields=['wallet_to'], name='wallet_to_idx'),
-        ),
+        migrations.AddIndex(model_name='transaction', index=models.Index(fields=['wallet_to'], name='wallet_to_idx'),),
     ]

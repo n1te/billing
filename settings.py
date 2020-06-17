@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import environ
 
 
@@ -38,11 +39,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'urls'
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    )
-}
+REST_FRAMEWORK = {'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',)}
 
 WSGI_APPLICATION = 'wsgi.application'
 

@@ -1,9 +1,10 @@
 import uuid
 
 from django.db import models
-from django.db.models import Q, CheckConstraint, F
+from django.db.models import CheckConstraint, F, Q
 from django.db.transaction import atomic
 from django.utils.functional import cached_property
+
 from model_utils.fields import AutoCreatedField
 
 
@@ -19,11 +20,7 @@ class Wallet(models.Model):
         indexes = [
             models.Index(fields=['name'], name='name_idx'),
         ]
-        constraints = [
-            CheckConstraint(
-                check=Q(balance__gte=0),
-                name='non_negative_balance')
-        ]
+        constraints = [CheckConstraint(check=Q(balance__gte=0), name='non_negative_balance')]
 
     @cached_property
     def transactions(self):

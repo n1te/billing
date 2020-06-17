@@ -2,12 +2,14 @@ import csv
 from decimal import Decimal
 from io import StringIO
 
-import pytest
 from django.urls import reverse
 from django.utils.http import urlencode
+
+import pytest
 from freezegun import freeze_time
 
-from wallet.models import Wallet, Transaction
+from wallet.models import Transaction, Wallet
+
 
 pytestmark = pytest.mark.django_db
 
@@ -40,10 +42,10 @@ def test_transaction_deposit_wrong_amount(client, wallet):
 def test_transaction_withdrawal(client, wallets):
     wallet1, wallet2 = wallets
     wallet1.deposit(100)
-    response = client.post(reverse('transaction-withdrawal', kwargs={'wallet_name': wallet1.name}), {
-        'amount': '12.34',
-        'wallet_to': wallet2.name,
-    })
+    response = client.post(
+        reverse('transaction-withdrawal', kwargs={'wallet_name': wallet1.name}),
+        {'amount': '12.34', 'wallet_to': wallet2.name,},
+    )
     assert response.status_code == 201
     transaction = Transaction.objects.last()
     assert transaction.amount == Decimal('12.34')
@@ -53,10 +55,10 @@ def test_transaction_withdrawal(client, wallets):
 
 def test_transaction_withdraw_wrong_amount(client, wallets):
     wallet1, wallet2 = wallets
-    response = client.post(reverse('transaction-withdrawal', kwargs={'wallet_name': wallet1.name}), {
-        'amount': '12.34',
-        'wallet_to': wallet2.name,
-    })
+    response = client.post(
+        reverse('transaction-withdrawal', kwargs={'wallet_name': wallet1.name}),
+        {'amount': '12.34', 'wallet_to': wallet2.name,},
+    )
     assert response.status_code == 400
     assert response.json() == {'detail': 'Wrong amount'}
 
@@ -110,7 +112,7 @@ def test_transactions_list_filters(client, wallets):
         ({}, [t1, t2, t3]),
         ({'date_from': '2020-01-02 00:00:00'}, [t3]),
         ({'type': 'income', 'date_to': '2020-01-02 00:00:00'}, [t1]),
-        ({'date_from': '123q'}, {'detail': 'Wrong date format'})
+        ({'date_from': '123q'}, {'detail': 'Wrong date format'}),
     )
 
     for params, expected in test_params:
@@ -118,7 +120,7 @@ def test_transactions_list_filters(client, wallets):
         assert data == expected
 
 
-def test_scv_export(client, wallets_with_transactions):
+def test_csv_export(client, wallets_with_transactions):
     wallet1, _ = wallets_with_transactions
     response = client.get(reverse('transaction-export', kwargs={'wallet_name': wallet1.name}))
     reader = csv.reader(StringIO(response.content.decode()))
