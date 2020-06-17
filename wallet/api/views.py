@@ -2,7 +2,7 @@ import csv
 from datetime import datetime
 
 from django.db import IntegrityError
-from django.http import FileResponse, HttpResponse
+from django.http import HttpResponse
 from django.utils.functional import cached_property
 
 from rest_framework import exceptions, mixins, status, viewsets
