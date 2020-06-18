@@ -44,7 +44,7 @@ def test_transaction_withdrawal(client, wallets):
     wallet1.deposit(100)
     response = client.post(
         reverse('transaction-withdrawal', kwargs={'wallet_name': wallet1.name}),
-        {'amount': '12.34', 'wallet_to': wallet2.name,},
+        {'amount': '12.34', 'wallet_to': wallet2.name},
     )
     assert response.status_code == 201
     transaction = Transaction.objects.last()
@@ -55,12 +55,16 @@ def test_transaction_withdrawal(client, wallets):
 
 def test_transaction_withdraw_wrong_amount(client, wallets):
     wallet1, wallet2 = wallets
-    response = client.post(
-        reverse('transaction-withdrawal', kwargs={'wallet_name': wallet1.name}),
-        {'amount': '12.34', 'wallet_to': wallet2.name,},
-    )
+    url = reverse('transaction-withdrawal', kwargs={'wallet_name': wallet1.name})
+    params = {'amount': '12.34', 'wallet_to': wallet2.name}
+    response = client.post(url, params)
     assert response.status_code == 400
     assert response.json() == {'detail': 'Wrong amount'}
+
+    wallet2.deposit(10)
+    params.update({'amount': -1})
+    response = client.post(url, params)
+    assert response.status_code == 400
 
 
 def test_transactions_wrong_wallet(client):

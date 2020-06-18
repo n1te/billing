@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from wallet.api.exceptions import WrongAmountError
 from wallet.models import Transaction, Wallet
 
 
@@ -32,3 +33,8 @@ class DepositTransactionSerializer(BaseTransactionSerializer):
 
 class WithdrawalTransactionSerializer(DepositTransactionSerializer):
     wallet_to = serializers.CharField(max_length=36, min_length=36)
+
+    def validate_amount(self, value):
+        if value < 0:
+            raise WrongAmountError
+        return value
